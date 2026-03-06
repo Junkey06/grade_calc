@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 ///
 /// Displays:
 /// - Student table with name, CA, test, total, grade, and remark
+/// - Per-subject score breakdown (expandable) when multiple subjects
 /// - Class statistics (highest, lowest, average, pass/fail counts)
 /// - Grade distribution bar chart
 /// - Export buttons: Download Excel (with Grade column), Download PDF
@@ -31,6 +32,7 @@ class _StudentResultScreenState extends State<StudentResultScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isExporting = false;
+  final Set<int> _expandedStudents = {};
 
   @override
   void initState() {
@@ -296,118 +298,216 @@ class _StudentResultScreenState extends State<StudentResultScreen>
   }
 
   Widget _buildStudentTile(Student student, int index) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            // Rank number
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                gradient: AppTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: Text(
-                  '${index + 1}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+    final isExpanded = _expandedStudents.contains(index);
+    final hasSubjects = student.hasMultipleSubjects;
+
+    return GestureDetector(
+      onTap: hasSubjects
+          ? () => setState(() {
+                if (isExpanded) {
+                  _expandedStudents.remove(index);
+                } else {
+                  _expandedStudents.add(index);
+                }
+              })
+          : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-            const SizedBox(width: 14),
-            // Student details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Text(
-                    student.name,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.textPrimary,
+                  // Rank number
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      gradient: AppTheme.primaryGradient,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${index + 1}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      _buildScorePill(
-                        'CA: ${student.caScore.toStringAsFixed(0)}',
-                      ),
-                      const SizedBox(width: 6),
-                      _buildScorePill(
-                        'Test: ${student.testScore.toStringAsFixed(0)}',
-                      ),
-                      const SizedBox(width: 6),
-                      _buildScorePill(
-                        'Total: ${student.totalScore.toStringAsFixed(1)}',
-                        highlight: true,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Icon(
-                        student.gradeIcon,
-                        size: 14,
-                        color: student.gradeColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Flexible(
-                        child: Text(
-                          student.remark,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: student.gradeColor,
-                            fontStyle: FontStyle.italic,
+                  const SizedBox(width: 14),
+                  // Student details
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          student.name,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.textPrimary,
                           ),
-                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            _buildScorePill(
+                              'CA: ${student.caScore.toStringAsFixed(0)}',
+                            ),
+                            const SizedBox(width: 6),
+                            _buildScorePill(
+                              'Test: ${student.testScore.toStringAsFixed(0)}',
+                            ),
+                            const SizedBox(width: 6),
+                            _buildScorePill(
+                              'Total: ${student.totalScore.toStringAsFixed(1)}',
+                              highlight: true,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Icon(
+                              student.gradeIcon,
+                              size: 14,
+                              color: student.gradeColor,
+                            ),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                student.remark,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: student.gradeColor,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Grade badge
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: student.gradeColor.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Center(
+                      child: Text(
+                        student.grade,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: student.gradeColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // Expand hint for multi-subject students
+              if (hasSubjects && !isExpanded)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.expand_more,
+                          size: 16, color: Colors.grey.shade400),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Tap to view ${student.subjects.length} subjects',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey.shade400,
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            // Grade badge
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: student.gradeColor.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Center(
-                child: Text(
-                  student.grade,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: student.gradeColor,
-                  ),
                 ),
-              ),
-            ),
-          ],
+              // Per-subject breakdown (expanded)
+              if (hasSubjects && isExpanded) ...[
+                const Divider(height: 24),
+                ...student.subjects.map((subject) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: AppTheme.primaryStart,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            subject.subjectName,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: AppTheme.textPrimary,
+                            ),
+                          ),
+                        ),
+                        _buildScorePill(
+                            'CA: ${subject.caScore.toStringAsFixed(0)}'),
+                        const SizedBox(width: 6),
+                        _buildScorePill(
+                            'Test: ${subject.testScore.toStringAsFixed(0)}'),
+                        const SizedBox(width: 6),
+                        _buildScorePill(
+                          'Total: ${subject.total.toStringAsFixed(1)}',
+                          highlight: true,
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.expand_less,
+                        size: 16, color: Colors.grey.shade400),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Tap to collapse',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey.shade400,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );

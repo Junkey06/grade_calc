@@ -35,18 +35,12 @@ class ExcelHandler {
         final caScore = _parseCell(row.length > 1 ? row[1] : null);
         final testScore = _parseCell(row.length > 2 ? row[2] : null);
 
-        // Total score: use column 4 if available, otherwise compute
-        final totalScore = row.length > 3 && row[3] != null
-            ? _parseCell(row[3])
-            : caScore + testScore;
-
         if (name.isNotEmpty) {
           students.add(
-            Student(
+            Student.singleSubject(
               name: name,
               caScore: caScore,
               testScore: testScore,
-              totalScore: totalScore,
             ),
           );
         }

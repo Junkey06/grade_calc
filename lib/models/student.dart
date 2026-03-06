@@ -1,32 +1,69 @@
 import 'package:flutter/material.dart';
+import 'subject_score.dart';
 
 /// OOP Model class representing a Student with scores and grade.
 ///
-/// Encapsulates all student-related data: name, CA score, test score,
-/// computed total score, and the resulting grade.
+/// Supports multiple subjects — each subject has its own CA and Test score.
+/// The student's overall caScore, testScore, and totalScore are computed
+/// as averages across all subjects.
 class Student {
   /// Student's full name
   final String name;
 
-  /// Continuous Assessment score
-  final double caScore;
-
-  /// Test/Exam score
-  final double testScore;
-
-  /// Total score (CA + Test), computed automatically
-  final double totalScore;
+  /// List of per-subject scores (CA + Test per subject)
+  final List<SubjectScore> subjects;
 
   /// Calculated grade based on totalScore (e.g., 'A', 'B+', 'F')
   String grade;
 
   Student({
     required this.name,
-    required this.caScore,
-    required this.testScore,
-    double? totalScore,
+    required this.subjects,
     this.grade = '',
-  }) : totalScore = totalScore ?? (caScore + testScore);
+  });
+
+  /// Factory constructor for single-subject backward compatibility.
+  /// Used when importing from Excel or other flat data sources.
+  factory Student.singleSubject({
+    required String name,
+    required double caScore,
+    required double testScore,
+    String subjectName = 'Subject',
+    String grade = '',
+  }) {
+    return Student(
+      name: name,
+      subjects: [
+        SubjectScore(
+          subjectName: subjectName,
+          caScore: caScore,
+          testScore: testScore,
+        ),
+      ],
+      grade: grade,
+    );
+  }
+
+  /// Average CA score across all subjects (lambda getter)
+  double get caScore => subjects.isEmpty
+      ? 0
+      : subjects.map((s) => s.caScore).reduce((a, b) => a + b) /
+          subjects.length;
+
+  /// Average Test score across all subjects (lambda getter)
+  double get testScore => subjects.isEmpty
+      ? 0
+      : subjects.map((s) => s.testScore).reduce((a, b) => a + b) /
+          subjects.length;
+
+  /// Average Total score across all subjects (lambda getter)
+  double get totalScore => subjects.isEmpty
+      ? 0
+      : subjects.map((s) => s.total).reduce((a, b) => a + b) /
+          subjects.length;
+
+  /// Whether this student has multiple subjects
+  bool get hasMultipleSubjects => subjects.length > 1;
 
   /// Lambda getter — returns the color corresponding to the grade
   Color get gradeColor => _gradeColorMap[grade] ?? Colors.grey;
@@ -77,14 +114,12 @@ class Student {
   Student copyWith({String? grade}) {
     return Student(
       name: name,
-      caScore: caScore,
-      testScore: testScore,
-      totalScore: totalScore,
+      subjects: subjects,
       grade: grade ?? this.grade,
     );
   }
 
   @override
   String toString() =>
-      'Student(name: $name, CA: $caScore, Test: $testScore, Total: $totalScore, Grade: $grade)';
+      'Student(name: $name, subjects: ${subjects.length}, Avg Total: ${totalScore.toStringAsFixed(1)}, Grade: $grade)';
 }
