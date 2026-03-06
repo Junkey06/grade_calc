@@ -16,11 +16,7 @@ class Student {
   /// Calculated grade based on totalScore (e.g., 'A', 'B+', 'F')
   String grade;
 
-  Student({
-    required this.name,
-    required this.subjects,
-    this.grade = '',
-  });
+  Student({required this.name, required this.subjects, this.grade = ''});
 
   /// Factory constructor for single-subject backward compatibility.
   /// Used when importing from Excel or other flat data sources.
@@ -48,19 +44,18 @@ class Student {
   double get caScore => subjects.isEmpty
       ? 0
       : subjects.map((s) => s.caScore).reduce((a, b) => a + b) /
-          subjects.length;
+            subjects.length;
 
   /// Average Test score across all subjects (lambda getter)
   double get testScore => subjects.isEmpty
       ? 0
       : subjects.map((s) => s.testScore).reduce((a, b) => a + b) /
-          subjects.length;
+            subjects.length;
 
   /// Average Total score across all subjects (lambda getter)
   double get totalScore => subjects.isEmpty
       ? 0
-      : subjects.map((s) => s.total).reduce((a, b) => a + b) /
-          subjects.length;
+      : subjects.map((s) => s.total).reduce((a, b) => a + b) / subjects.length;
 
   /// Whether this student has multiple subjects
   bool get hasMultipleSubjects => subjects.length > 1;
@@ -112,11 +107,7 @@ class Student {
 
   /// Create a copy of this student with an updated grade
   Student copyWith({String? grade}) {
-    return Student(
-      name: name,
-      subjects: subjects,
-      grade: grade ?? this.grade,
-    );
+    return Student(name: name, subjects: subjects, grade: grade ?? this.grade);
   }
 
   @override

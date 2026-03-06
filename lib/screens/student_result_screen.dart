@@ -304,12 +304,12 @@ class _StudentResultScreenState extends State<StudentResultScreen>
     return GestureDetector(
       onTap: hasSubjects
           ? () => setState(() {
-                if (isExpanded) {
-                  _expandedStudents.remove(index);
-                } else {
-                  _expandedStudents.add(index);
-                }
-              })
+              if (isExpanded) {
+                _expandedStudents.remove(index);
+              } else {
+                _expandedStudents.add(index);
+              }
+            })
           : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
@@ -435,8 +435,11 @@ class _StudentResultScreenState extends State<StudentResultScreen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.expand_more,
-                          size: 16, color: Colors.grey.shade400),
+                      Icon(
+                        Icons.expand_more,
+                        size: 16,
+                        color: Colors.grey.shade400,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Tap to view ${student.subjects.length} subjects',
@@ -477,10 +480,12 @@ class _StudentResultScreenState extends State<StudentResultScreen>
                           ),
                         ),
                         _buildScorePill(
-                            'CA: ${subject.caScore.toStringAsFixed(0)}'),
+                          'CA: ${subject.caScore.toStringAsFixed(0)}',
+                        ),
                         const SizedBox(width: 6),
                         _buildScorePill(
-                            'Test: ${subject.testScore.toStringAsFixed(0)}'),
+                          'Test: ${subject.testScore.toStringAsFixed(0)}',
+                        ),
                         const SizedBox(width: 6),
                         _buildScorePill(
                           'Total: ${subject.total.toStringAsFixed(1)}',
@@ -493,8 +498,11 @@ class _StudentResultScreenState extends State<StudentResultScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.expand_less,
-                        size: 16, color: Colors.grey.shade400),
+                    Icon(
+                      Icons.expand_less,
+                      size: 16,
+                      color: Colors.grey.shade400,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'Tap to collapse',

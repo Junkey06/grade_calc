@@ -77,8 +77,9 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
     _subjectNameControllers.clear();
 
     for (int i = 0; i < _numberOfSubjects; i++) {
-      _subjectNameControllers
-          .add(TextEditingController(text: 'Subject ${i + 1}'));
+      _subjectNameControllers.add(
+        TextEditingController(text: 'Subject ${i + 1}'),
+      );
     }
   }
 
@@ -205,13 +206,16 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
           return FadeTransition(
             opacity: animation,
             child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, 0.3),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeOutCubic,
-              )),
+              position:
+                  Tween<Offset>(
+                    begin: const Offset(0, 0.3),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutCubic,
+                    ),
+                  ),
               child: child,
             ),
           );
@@ -237,8 +241,8 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
                   child: _currentStep == 0
                       ? _buildSetupStep()
                       : _currentStep == 1
-                          ? _buildSubjectNamesStep()
-                          : _buildStudentEntryStep(),
+                      ? _buildSubjectNamesStep()
+                      : _buildStudentEntryStep(),
                 ),
               ),
             ],
@@ -501,8 +505,11 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
                   gradient: AppTheme.primaryGradient,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.edit_note, color: Colors.white,
-                    size: 22),
+                child: const Icon(
+                  Icons.edit_note,
+                  color: Colors.white,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 14),
               Text(
@@ -567,8 +574,9 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 16),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontWeight: FontWeight.normal,
@@ -577,8 +585,11 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.clear,
-                        color: Colors.grey.shade400, size: 20),
+                    icon: Icon(
+                      Icons.clear,
+                      color: Colors.grey.shade400,
+                      size: 20,
+                    ),
                     onPressed: () => _subjectNameControllers[index].clear(),
                   ),
                 ],
@@ -699,8 +710,7 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check_circle,
-                    color: AppTheme.accentColor, size: 18),
+                Icon(Icons.check_circle, color: AppTheme.accentColor, size: 18),
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(
@@ -782,8 +792,10 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
               decoration: InputDecoration(
                 labelText: 'Student Name',
                 hintText: 'Enter full name',
-                prefixIcon: const Icon(Icons.person,
-                    color: AppTheme.primaryStart),
+                prefixIcon: const Icon(
+                  Icons.person,
+                  color: AppTheme.primaryStart,
+                ),
                 filled: true,
                 fillColor: Colors.grey.shade50,
                 border: OutlineInputBorder(
@@ -875,14 +887,18 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
                 child: TextFormField(
                   controller: _caControllers[studentIndex][subjectIndex],
                   validator: _validateScore,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
                     labelText: 'CA',
                     hintText: '0-100',
-                    prefixIcon: const Icon(Icons.assignment,
-                        color: AppTheme.primaryStart, size: 18),
+                    prefixIcon: const Icon(
+                      Icons.assignment,
+                      color: AppTheme.primaryStart,
+                      size: 18,
+                    ),
                     filled: true,
                     fillColor: Colors.grey.shade50,
                     border: OutlineInputBorder(
@@ -901,7 +917,9 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
                       ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 14),
+                      horizontal: 12,
+                      vertical: 14,
+                    ),
                   ),
                   style: const TextStyle(fontSize: 14),
                 ),
@@ -911,14 +929,18 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
                 child: TextFormField(
                   controller: _testControllers[studentIndex][subjectIndex],
                   validator: _validateScore,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
                     labelText: 'Test',
                     hintText: '0-100',
-                    prefixIcon: const Icon(Icons.quiz,
-                        color: AppTheme.primaryStart, size: 18),
+                    prefixIcon: const Icon(
+                      Icons.quiz,
+                      color: AppTheme.primaryStart,
+                      size: 18,
+                    ),
                     filled: true,
                     fillColor: Colors.grey.shade50,
                     border: OutlineInputBorder(
@@ -937,7 +959,9 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
                       ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 14),
+                      horizontal: 12,
+                      vertical: 14,
+                    ),
                   ),
                   style: const TextStyle(fontSize: 14),
                 ),
@@ -978,8 +1002,7 @@ class _ManualEntryScreenState extends State<ManualEntryScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.functions,
-                color: AppTheme.primaryStart, size: 18),
+            const Icon(Icons.functions, color: AppTheme.primaryStart, size: 18),
             const SizedBox(width: 6),
             Text(
               'Avg Total: ${avgTotal.toStringAsFixed(1)} ($validCount/$_numberOfSubjects subjects)',
